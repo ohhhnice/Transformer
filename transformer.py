@@ -32,13 +32,17 @@ class EncodeBlock(nn.Module):
         super(EncodeBlock, self).__init__()
         self.FeedForward = FeedForward(d_model, d_ff, dropout)
         self.MultiHeadAttention = MultiHeadAttention(d_model, n_heads, dropout)
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
 
     def forward(self, x, mask=None):
         '''
         mask: (batch_size, seq_len)
         '''
         x = self.MultiHeadAttention(x, x, x, mask)
+        x = self.dropout1(x)
         x = self.FeedForward(x)
+        x = self.dropout2(x)
         # x (batch_size, seq_len, d_model)
         return x
         
@@ -49,11 +53,17 @@ class DecodeBlock(nn.Module):
         self.FeedForward = FeedForward(d_model, d_ff, dropout)
         self.MultiHeadAttention = MultiHeadAttention(d_model, n_heads, dropout)
         self.layer_norm = nn.LayerNorm(d_model)
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
+        self.dropout3 = nn.Dropout(dropout)
 
     def forward(self, x, enco_output, self_mask=None, cross_mask=None):
         x = self.MultiHeadAttention(x, x, x, self_mask)  # Self-attention
+        x = self.dropout1(x)
         x = self.MultiHeadAttention(x, enco_output, enco_output, cross_mask) # Cross-attention
+        x = self.dropout2(x)
         x = self.FeedForward(x)
+        x = self.dropout3(x)
         return x
 
 class FeedForward(nn.Module):
@@ -69,7 +79,6 @@ class FeedForward(nn.Module):
         x = F.relu(self.linear1(x))
         x = self.dropout(x)
         x = self.linear2(x)
-        x = self.dropout(x)
         x = self.layer_norm(x + residual)
         return x
 
@@ -108,8 +117,9 @@ class MultiHeadAttention(nn.Module):
         return output
 
 class Position_Embedding(nn.Module):
-    def __init__(self, d_model, max_len = 500):
+    def __init__(self, d_model, max_len = 500, dropout=0.1):
         super(Position_Embedding, self).__init__()
+        self.dropout = nn.Dropout(p=dropout)
         pe = torch.zeros(max_len, d_model)
         pos = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
         pe[:, 0::2] = torch.sin(pos * torch.exp(-torch.arange(0, d_model, 2).unsqueeze(0)/d_model * math.log(10000)))
@@ -118,7 +128,7 @@ class Position_Embedding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        return x + self.pe[:,:x.size(1),:]
+        return self.dropout(x + self.pe[:,:x.size(1),:])
 
 
 def padding_fun(input_li, max_len, padding=0):
@@ -155,11 +165,16 @@ def get_mask(src, tgt, pad_idx=0):
 
 if __name__ == "__main__":
     batch_size =  2
-    seq_len = 3
-    d_model = 512
+    seq_len = 5
+    d_model = 8
     src_vocab_size = 200 # 词汇表，包括特殊字符
     tgt_vocab_size = 200 
     max_len = 10 # 序列长度
+    n_heads = 8
+    num_encode_layer = 2
+    num_decode_layer = 2
+    d_ff = 2048
+    dropout=0.1
 
     # data = torch.randn(batch_size, seq_len, d_model)
     # PE = Position_Embedding(d_model)
@@ -180,13 +195,13 @@ if __name__ == "__main__":
     tgt_mask = get_tgt_mask(tgt_seq_padding, pad_idx=0) # 获取mask
 
     model = Transformer(src_vocab_size, tgt_vocab_size, 
-                        d_model=512, 
-                        n_heads=8, 
-                        num_encode_layer=2, 
-                        num_decode_layer=2, 
-                        d_ff = 2048,
-                        max_len=500,
-                        dropout=0.1)
+                        d_model=d_model, 
+                        n_heads=n_heads, 
+                        num_encode_layer=num_encode_layer, 
+                        num_decode_layer=num_decode_layer, 
+                        d_ff = d_ff,
+                        max_len=max_len,
+                        dropout=dropout)
     
     output = model(src=src_seq_padding, tgt=tgt_seq_padding, src_mask=src_mask, tgt_mask=tgt_mask)
     print(src_seq_padding.shape, tgt_seq_padding.shape)
