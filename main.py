@@ -1,4 +1,5 @@
 import torch
+from utils.tokenizer import get_tokenizers
 
 def main():
     config = {
@@ -11,3 +12,8 @@ def main():
     }
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    en_tokenizer, zh_tokenizer = get_tokenizers()
+    
+
+if __name__ == "__main__":
+    main()
