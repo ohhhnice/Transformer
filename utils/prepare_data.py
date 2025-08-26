@@ -63,5 +63,8 @@ class Vocabulary():
                     idx = len(self.word2idx)
                     self.word2idx[token] = idx
                     self.idx2word[idx] = token
+    
+    def numericalize(self, tokenized_sentence):
+        return [self.word2idx.get(token, self.word2idx["<UNK>"]) for token in tokenized_sentence]
         
         
