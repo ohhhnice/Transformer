@@ -1,3 +1,6 @@
+from torch.utils.data import Dataset
+import torch
+
 def get_data():
     english_sentences = [
         "Hello, how are you?",
@@ -40,16 +43,16 @@ def get_data():
 
 class Vocabulary():
     def __init__(self, min_freq=1):
-        self.word2idx = {"<PAD>":0, "<SOS>":1, "EOS":2, "<UNK>":3}
-        self.idx2word = {0: "<PAD>", 1: "<SOS>", 2: "EOS", 3: "<UNK>"}
+        self.word2idx = {"<PAD>":0, "<SOS>":1, "<EOS>":2, "<UNK>":3}
+        self.idx2word = {0: "<PAD>", 1: "<SOS>", 2: "<EOS>", 3: "<UNK>"}
         self.min_freq = min_freq
 
     def __len__(self):
         return len(self.word2idx)
 
     def build_vocabulary(self, tokenized_sentences):
+        freq = {}
         for sentence in tokenized_sentences:
-            freq = {}
             # 统计频次
             for token in sentence:
                 if token not in freq:
@@ -68,3 +71,23 @@ class Vocabulary():
         return [self.word2idx.get(token, self.word2idx["<UNK>"]) for token in tokenized_sentence]
         
         
+
+class TranslationDataset(Dataset):
+    def __init__(self, data, en_vocab, zh_vocab, max_len=30):
+        self.data = data
+        self.en_vocab = en_vocab
+        self.zh_vocab = zh_vocab
+        self.max_len = max_len
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        en_sentence, zh_sentence = self.data[idx]
+        en_sentence = ["<SOS>"] + en_sentence + ["<EOS>"]
+        zh_sentence = ["<SOS>"] + zh_sentence + ["<EOS>"]
+        en_indices = self.en_vocab.numericalize(en_sentence)
+        zh_indices = self.zh_vocab.numericalize(zh_sentence)
+        en_indices_pad = en_indices[:self.max_len] + [self.en_vocab.word2idx["<PAD>"]] * (self.max_len - len(en_indices))
+        zh_indices_pad = zh_indices[:self.max_len] + [self.zh_vocab.word2idx["<PAD>"]] * (self.max_len - len(zh_indices))
+        return torch.tensor(en_indices_pad), torch.tensor(zh_indices_pad)
