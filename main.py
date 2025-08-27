@@ -1,20 +1,69 @@
 import torch
 from utils.tokenizer import get_tokenizers
+from utils.prepare_data import Vocabulary, TranslationDataset, get_data
+from utils.set_seed import set_all_seeds
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader
+from model.transformer import Transformer
+from utils.mask_fun import get_padding_mask, get_tgt_mask
 
 def main():
+    SEED = 5
     config = {
         'batch_size': 2,
-        'seq_len': 3,
         'd_model': 512,
-        'src_vocab_size': 200,  # 词汇表，包括特殊字符
-        'tgt_vocab_size': 200,
-        'max_len': 10,  # 序列长度
+        'max_len': 30,  # 序列长度
+        'num_encode_layer': 2,
+        'num_decode_layer': 2,
+        'n_heads': 8,
+        'd_ff': 2048,
+        'dropout': 0.1,
+        'padding_idx': 0,
     }
 
+    set_all_seeds(SEED)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = "mps" if torch.backends.mps.is_available() else "cpu"
+
     en_tokenizer, zh_tokenizer = get_tokenizers()
-    
+    en_sentences, zh_sentences = get_data()
+    en_tokenized = [en_tokenizer(sentence) for sentence in en_sentences]
+    zh_tokenized = [zh_tokenizer(sentence) for sentence in zh_sentences]
+    en_vocab = Vocabulary()
+    zh_vocab = Vocabulary()
+    en_vocab.build_vocabulary(en_tokenized)
+    zh_vocab.build_vocabulary(zh_tokenized)
+
+    train_data, test_data = train_test_split(list(zip(en_tokenized, zh_tokenized)), test_size=0.2, random_state=SEED)
+    train_data = TranslationDataset(train_data, en_vocab, zh_vocab, max_len=config['max_len'])
+    test_data = TranslationDataset(test_data, en_vocab, zh_vocab, max_len=config['max_len'])
+    train_dataloaeder = DataLoader(train_data, batch_size=config['batch_size'], shuffle=True)
+    test_dataloader = DataLoader(test_data, batch_size=config['batch_size'], shuffle=False)
+
+
+    # load model
+    model = Transformer(
+        src_vocab_size=len(zh_vocab), 
+        tgt_vocab_size=len(en_vocab),
+        d_model=config['d_model'],
+        num_encode_layer=config['num_encode_layer'],
+        num_decode_layer=config['num_decode_layer'],
+        n_heads=config['n_heads'],
+        d_ff=config['d_ff'],
+        dropout=config['dropout'],
+        max_len=config['max_len'],
+        padding_idx=config['padding_idx']).to(device)
+
+
+    for en, zh in train_dataloaeder:
+        src_mask = get_padding_mask(zh, pad_idx=config['padding_idx']).to(device)
+        tgt_mask = get_tgt_mask(en, pad_idx=config['padding_idx']).to(device)
+        en, zh = en.to(device), zh.to(device)
+        output = model(src=zh, tgt=en, src_mask=src_mask, tgt_mask=tgt_mask)
+        print(output.shape)
+        break
+
+
 
 if __name__ == "__main__":
     main()

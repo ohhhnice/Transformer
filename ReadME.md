@@ -2,5 +2,17 @@
 # 运行
 
 ## 1. 先安装对应的tokenizer
-## pip install tokenizer_whl/en_core_web_sm-3.8.0-py3-none-any.whl 里的内容即可
-## pip install tokenizer_whl/zh_core_web_sm-3.8.0-py3-none-any.whl 里的内容即可
+## pip install toknizer_whl/....whl 里的内容即可
+
+# ToDo
+1. 先手动实现一遍，看看能不能训练数据。仅此一次，后续快速迭代模型。
+2. 修改模型架构（改成T5[https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
+3. 调用hugging face去替换模块：tokenizer 模块， model
+4. 考虑训练需要的指标
+5. 更换数据集，看看更换成本
+6. 尝试 lora 手动实现微调
+7. 尝试蒸馏模型
+8. 学着量化模型
+9. 强化学习
+10. 一个encoder-only、一个decoder-only都试一下
+11. 计算内存占用量，参数量
