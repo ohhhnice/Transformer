@@ -26,6 +26,7 @@ def main():
 
     set_all_seeds(SEED)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # device = "mps" if torch.backends.mps.is_available() else "cpu"
 
     en_tokenizer, zh_tokenizer = get_tokenizers()
     en_sentences, zh_sentences = get_data()
