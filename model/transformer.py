@@ -51,16 +51,17 @@ class DecodeBlock(nn.Module):
     def __init__(self, d_model, n_heads, d_ff=2048, dropout=0.1):
         super(DecodeBlock, self).__init__()
         self.FeedForward = FeedForward(d_model, d_ff, dropout)
-        self.MultiHeadAttention = MultiHeadAttention(d_model, n_heads, dropout)
+        self.self_attn = MultiHeadAttention(d_model, n_heads, dropout)
+        self.cross_attn = MultiHeadAttention(d_model, n_heads, dropout)
         self.layer_norm = nn.LayerNorm(d_model)
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
         self.dropout3 = nn.Dropout(dropout)
 
     def forward(self, x, enco_output, self_mask=None, cross_mask=None):
-        x = self.MultiHeadAttention(x, x, x, self_mask)  # Self-attention
+        x = self.self_attn(x, x, x, self_mask)  # Self-attention
         x = self.dropout1(x)
-        x = self.MultiHeadAttention(x, enco_output, enco_output, cross_mask) # Cross-attention
+        x = self.cross_attn(x, enco_output, enco_output, cross_mask) # Cross-attention
         x = self.dropout2(x)
         x = self.FeedForward(x)
         x = self.dropout3(x)
@@ -102,9 +103,9 @@ class MultiHeadAttention(nn.Module):
         output: x (batch_size, seq_len, d_model)
         '''
         batch_size, seq_len, d_model = q.size()
-        Q = self.W_q(q).view(batch_size, seq_len, self.n_heads, self.d_k).transpose(1,2)
-        K = self.W_k(k).view(batch_size, seq_len, self.n_heads, self.d_k).transpose(1,2)
-        V = self.W_v(v).view(batch_size, seq_len, self.n_heads, self.d_k).transpose(1,2)
+        Q = self.W_q(q).view(batch_size, -1, self.n_heads, self.d_k).transpose(1,2)
+        K = self.W_k(k).view(batch_size, -1, self.n_heads, self.d_k).transpose(1,2)
+        V = self.W_v(v).view(batch_size, -1, self.n_heads, self.d_k).transpose(1,2)
         scores = torch.matmul(Q, K.transpose(-2,-1))/math.sqrt(self.d_k) # (batch_size, n_heads, seq_len, seq_len)
         if mask is not None:
             # mask: list[1/0] (batch_size, n_heads, seq_len, seq_len)

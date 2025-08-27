@@ -8,5 +8,5 @@ def get_tgt_mask(tgt, pad_idx=0):
     # tgt: (batch_size, tgt_len)
     tgt_pad_mask = get_padding_mask(tgt, pad_idx)
     tgt_len = tgt.size(1)
-    tri_mask = torch.tril(torch.ones(tgt_len, tgt_len)).bool()
+    tri_mask = torch.tril(torch.ones((tgt_len, tgt_len), device = tgt.device)).bool()
     return tgt_pad_mask & tri_mask

@@ -626,7 +626,8 @@ def main():
         "I love China.",
         "This is a test.",
         "What is your favorite food?",
-        "I study computer science."
+        "I study computer science.",
+        "Hello, how are you?"
     ]
     
     print("\n翻译测试:")
