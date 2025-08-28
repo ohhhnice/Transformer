@@ -5,7 +5,9 @@ from utils.set_seed import set_all_seeds
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 from model.transformer import Transformer
+from torch import nn
 from utils.mask_fun import get_padding_mask, get_tgt_mask
+from train.train_function import train_epoch, evaluate_epoch
 
 def main():
     SEED = 5
@@ -19,6 +21,7 @@ def main():
         'd_ff': 2048,
         'dropout': 0.1,
         'padding_idx': 0,
+        'num_epochs': 10
     }
 
     set_all_seeds(SEED)
@@ -36,6 +39,7 @@ def main():
 
     train_data, test_data = train_test_split(list(zip(en_tokenized, zh_tokenized)), test_size=0.2, random_state=SEED)
     train_data = TranslationDataset(train_data, en_vocab, zh_vocab, max_len=config['max_len'])
+    train_data[0]
     test_data = TranslationDataset(test_data, en_vocab, zh_vocab, max_len=config['max_len'])
     train_dataloaeder = DataLoader(train_data, batch_size=config['batch_size'], shuffle=True)
     test_dataloader = DataLoader(test_data, batch_size=config['batch_size'], shuffle=False)
@@ -54,14 +58,32 @@ def main():
         max_len=config['max_len'],
         padding_idx=config['padding_idx']).to(device)
 
+    criterion = nn.CrossEntropyLoss(ignore_index=en_vocab.word2idx["<PAD>"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
-    for en, zh in train_dataloaeder:
-        src_mask = get_padding_mask(zh, pad_idx=config['padding_idx']).to(device)
-        tgt_mask = get_tgt_mask(en, pad_idx=config['padding_idx']).to(device)
-        en, zh = en.to(device), zh.to(device)
-        output = model(src=zh, tgt=en, src_mask=src_mask, tgt_mask=tgt_mask)
-        print(output.shape)
-        break
+    best_val_loss = float('inf')
+    for epoch in range(config['num_epochs']):
+        train_loss = train_epoch(model, 
+                           train_dataloaeder, 
+                           criterion, 
+                           optimizer, 
+                           en_vocab.word2idx['<PAD>'], 
+                           device)
+        
+        val_loss = evaluate_epoch(model, 
+                             test_dataloader, 
+                             criterion, 
+                             en_vocab.word2idx['<PAD>'], 
+                             device)
+        
+
+        print(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}")
+        print(f"Epoch {epoch+1}, Val Loss: {val_loss:.4f}")
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), 'best_transformer.pth')
+            print("保存最佳模型")
+
 
 
 
