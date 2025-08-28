@@ -4,6 +4,9 @@
 ## 1. 先安装对应的tokenizer
 ## pip install toknizer_whl/....whl 里的内容即可
 
+## win: device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+## mac: device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+
 # ToDo
 1. 先手动实现一遍，看看能不能训练数据。仅此一次，后续快速迭代模型。
 2. 修改模型架构（改成T5[https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
