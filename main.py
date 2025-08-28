@@ -8,15 +8,16 @@ from model.transformer import Transformer
 from torch import nn
 from utils.mask_fun import get_padding_mask, get_tgt_mask
 from train.train_function import train_epoch, evaluate_epoch
+from run import translate_sentence
 
 def main():
     SEED = 5
     config = {
-        'batch_size': 2,
+        'batch_size': 30,
         'd_model': 512,
-        'max_len': 30,  # 序列长度
-        'num_encode_layer': 2,
-        'num_decode_layer': 2,
+        'max_len': 100,  # 序列长度
+        'num_encode_layer': 6,
+        'num_decode_layer': 6,
         'n_heads': 8,
         'd_ff': 2048,
         'dropout': 0.1,
@@ -76,7 +77,6 @@ def main():
                              en_vocab.word2idx['<PAD>'], 
                              device)
         
-
         print(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}")
         print(f"Epoch {epoch+1}, Val Loss: {val_loss:.4f}")
         if val_loss < best_val_loss:

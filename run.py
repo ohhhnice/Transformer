@@ -51,11 +51,11 @@ if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     config = {
-            'batch_size': 2,
+            'batch_size': 30,
             'd_model': 512,
-            'max_len': 30,  # 序列长度
-            'num_encode_layer': 2,
-            'num_decode_layer': 2,
+            'max_len': 100,  # 序列长度
+            'num_encode_layer': 6,
+            'num_decode_layer': 6,
             'n_heads': 8,
             'd_ff': 2048,
             'dropout': 0.1,
