@@ -8,7 +8,7 @@ class EncoderLayer(nn.Module):
     def __init__(self, d_model, n_heads, d_ff, dropout=0.1):
         super(EncoderLayer, self).__init__()
         self.self_attn = MultiHeadAttention(d_model, n_heads, dropout)
-        self.ffn = FeedForward(d_model, d_ff)
+        self.ffn = FeedForward(d_model, d_ff, dropout)
         self.layer_norm1 = nn.LayerNorm(d_model)
         self.layer_norm2 = nn.LayerNorm(d_model)
         self.dropout1 = nn.Dropout(dropout)
