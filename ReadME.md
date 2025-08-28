@@ -7,6 +7,22 @@
 ## win: device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 ## mac: device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
+
+.
+├── Inference  # 推理部分
+├── ReadME.md
+├── config     # 模型设置部分
+├── load_data  # 数据加载部分
+├── model      # 模型部分
+├── modules    # 基础模块
+├── pth        # 保存的参数
+├── ref        # 外部参考代码
+├── test       # 测试部分
+├── train      # 训练脚本
+└── utils      # 基础工具
+
+
+
 # ToDo
 1. 先手动实现一遍，看看能不能训练数据。仅此一次，后续快速迭代模型。
 2. 修改模型架构（改成T5[https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
