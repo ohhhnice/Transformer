@@ -14,14 +14,14 @@ class MultiHeadAttention(nn.Module):
         self.W_k = nn.Linear(d_model, d_model)
         self.W_v = nn.Linear(d_model, d_model)
         self.W_o = nn.Linear(d_model, d_model)
-        self.layer_norm = nn.LayerNorm(d_model)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, q, k, v, mask=None):
         '''
-        q,k,v: batch_size, seq_len, d_model
+        q,k,v: (batch_size, seq_len(q,k,v), d_model)
+        mask[bool]: (seq_len_q, seq_len_k) mask the item which value is 0.
+        output: (batch_size, seq_len(q), d_model)
         '''
-        residual = q
         batch_size, seq_len, d_model = q.size()
         q = self.W_q(q).contiguous().view(batch_size, -1, self.n_heads, self.d_k).transpose(1,2)
         k = self.W_k(k).contiguous().view(batch_size, -1, self.n_heads, self.d_k).transpose(1,2)
@@ -29,9 +29,9 @@ class MultiHeadAttention(nn.Module):
         scores = torch.matmul(q, k.transpose(-1, -2))/math.sqrt(self.d_k) # (batch_size, n_heads, seq_len, seq_len)
 
         if mask is not None:
-            attn.fill_mask(-1e9, mask)
+            scores.masked_fill(mask==0, -1e9)
 
         attn = self.dropout(F.softmax(scores, dim=-1))
         output = torch.matmul(attn, v).transpose(1,2).contiguous().view(batch_size, seq_len, -1)
         output = self.W_o(output)
-        return self.layer_norm(output + residual)
+        return output
