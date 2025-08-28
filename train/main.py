@@ -13,9 +13,7 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 from model.transformer import Transformer
 from torch import nn
-from utils.mask_fun import get_padding_mask, get_tgt_mask
 from utils.train_function import train_epoch, evaluate_epoch
-from Inference.run import translate_sentence
 
 def main():
     SEED = 5
