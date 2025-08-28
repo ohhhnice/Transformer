@@ -324,6 +324,9 @@ class Transformer(nn.Module):
         self.decoder = decoder
         
     def forward(self, src, trg, src_mask, trg_mask, cross_mask):
+        '''
+        src: (batch_size, src_len)
+        '''
         enc_output = self.encoder(src, src_mask)
         dec_output = self.decoder(trg, enc_output, trg_mask, cross_mask)
         return dec_output

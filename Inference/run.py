@@ -4,7 +4,7 @@ from load_data.prepare_data import Vocabulary, TranslationDataset, get_data
 from utils.set_seed import set_all_seeds
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
-from model.transformer import Transformer
+from model.transformer_v1 import Transformer
 from torch import nn
 from utils.mask_fun import get_padding_mask, get_tgt_mask
 from utils.train_function import train_epoch, evaluate_epoch

@@ -12,6 +12,7 @@ from modules.multi_head_attention import MultiHeadAttention
 from modules.position_embedding import PositionEncoding
 from modules.feed_forward import FeedForward
 from modules.encoder_layer import EncoderLayer
+from modules.decoder_layer import DecoderLayer
 
 # 加载模型设置
 model_config_file = './config/transformer_config.json'
@@ -52,3 +53,53 @@ print(output)
 print(q.shape, output.shape)
 
 # decoder_layer
+decoder_layer = DecoderLayer(d_model, n_heads, d_ff)
+output = decoder_layer(q, k)
+print(output)
+print(q.shape, output.shape)
+
+# encoder
+from modules.encoder import Encoder
+src_vocab_size = 20
+num_encoder_layers = model_config['num_encoder_layers']
+encoder = Encoder(src_vocab_size, d_model, n_heads, d_ff, num_layers=num_encoder_layers)
+src = torch.randint(0, src_vocab_size, (batch_size, seq_len))
+output = encoder(src)
+print(output)
+print(src.shape, output.shape)
+
+# decoder
+from modules.decoder import Decoder
+tgt_vocab_size = 33
+num_decoder_layers = model_config['num_decoder_layers']
+decoder = Decoder(tgt_vocab_size, d_model, n_heads, d_ff, num_layers=num_decoder_layers)
+tgt = torch.randint(0, tgt_vocab_size, (batch_size, seq_len))
+output = decoder(tgt, output)
+print(output)
+print(tgt.shape, output.shape)
+
+# transformer
+from model.transformer import Transformer
+transformer = Transformer(encoder, decoder)
+output = transformer(src, tgt)
+print(output)
+print(src.shape, tgt.shape, output.shape)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
