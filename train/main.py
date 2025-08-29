@@ -44,7 +44,7 @@ def main():
     # 训练设置
     criterion = nn.CrossEntropyLoss(ignore_index=padding_idx)
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
-    num_epochs = 100
+    num_epochs = 20
     best_valid_loss = float('inf')
     for epoch in range(num_epochs):
         train_loss = train_epoch(model, train_dataloader, criterion, optimizer, padding_idx, device)

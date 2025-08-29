@@ -477,6 +477,19 @@ def main():
         'num_layers': 3,
         'dropout': 0.1,
         'lr': 0.0005,
+        'num_epochs': 100,
+        'max_len': 50,
+        'min_freq': 1
+    }
+
+    config = {
+        'batch_size': 2,
+        'd_model': 512,
+        'nhead': 8,
+        'd_ff': 2048,
+        'num_layers': 3,
+        'dropout': 0.1,
+        'lr': 0.0001,
         'num_epochs': 20,
         'max_len': 50,
         'min_freq': 1
