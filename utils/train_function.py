@@ -5,9 +5,9 @@ from tqdm import tqdm
 def train_epoch(model, data_loader, criterion, optimizer, pad_idx, device):
     model.train()
     total_loss = 0
-    for en, zh in tqdm(data_loader, desc="Train Epoch"):
+    for zh, en  in tqdm(data_loader, desc="Train Epoch"):
         # en, zh: (batch_size, seq_len)
-        en, zh = en.to(device), zh.to(device)
+        zh, en = zh.to(device), en.to(device)
         src_input = zh
         tgt_input, tgt_output = en[:, :-1], en[:, 1:]
         src_mask = get_padding_mask(src_input, pad_idx=pad_idx).to(device)
@@ -30,8 +30,8 @@ def evaluate_epoch(model, data_loader, criterion, pad_idx, device):
     model.eval()
     total_loss = 0
     with torch.no_grad():
-        for en, zh in tqdm(data_loader, desc='Eval Epoch'):
-            en, zh = en.to(device), zh.to(device)
+        for zh, en in tqdm(data_loader, desc='Eval Epoch'):
+            zh, en = zh.to(device), en.to(device)
             src_input = zh
             tgt_input, tgt_output = en[:, :-1], en[:, 1:]
             src_mask = get_padding_mask(src_input, pad_idx=pad_idx).to(device)

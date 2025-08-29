@@ -38,7 +38,7 @@ def get_data():
         "他会说英语和中文。"
     ]
      
-    return english_sentences, chinese_sentences
+    return chinese_sentences, english_sentences
 
 
 class Vocabulary():
@@ -73,21 +73,21 @@ class Vocabulary():
         
 
 class TranslationDataset(Dataset):
-    def __init__(self, data, en_vocab, zh_vocab, max_len=30):
+    def __init__(self, data, zh_vocab, en_vocab, max_len=30):
         self.data = data
-        self.en_vocab = en_vocab
         self.zh_vocab = zh_vocab
+        self.en_vocab = en_vocab
         self.max_len = max_len
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        en_sentence, zh_sentence = self.data[idx]
-        en_sentence = ["<SOS>"] + en_sentence + ["<EOS>"]
+        zh_sentence, en_sentence = self.data[idx]
         zh_sentence = ["<SOS>"] + zh_sentence + ["<EOS>"]
-        en_indices = self.en_vocab.numericalize(en_sentence)
+        en_sentence = ["<SOS>"] + en_sentence + ["<EOS>"]
         zh_indices = self.zh_vocab.numericalize(zh_sentence)
-        en_indices_pad = en_indices[:self.max_len] + [self.en_vocab.word2idx["<PAD>"]] * (self.max_len - len(en_indices))
+        en_indices = self.en_vocab.numericalize(en_sentence)
         zh_indices_pad = zh_indices[:self.max_len] + [self.zh_vocab.word2idx["<PAD>"]] * (self.max_len - len(zh_indices))
-        return torch.tensor(en_indices_pad), torch.tensor(zh_indices_pad)
+        en_indices_pad = en_indices[:self.max_len] + [self.en_vocab.word2idx["<PAD>"]] * (self.max_len - len(en_indices))
+        return torch.tensor(zh_indices_pad), torch.tensor(en_indices_pad)
