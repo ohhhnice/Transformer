@@ -7,11 +7,19 @@ def cal_time(n_encoder_layer, n_decoder_layer, d_model, src_seq, tgt_seq, dff, b
 
     total_time = total_floats * batch / (floats*use_ratio)
 
+    embedding_param = 110000 * d_model
+    total_param = n_encoder_layer * (4 * d_model * d_model + 2 * d_model * dff + 5 * d_model) + \
+                  n_decoder_layer * (4 * d_model * d_model + 2 * d_model * dff + 19 * d_model + 4*d_model*d_model) + \
+                  tgt_vocab * d_model + embedding_param
+    
+
     print("encoder_layer_floats: {:.2f}G".format(encoder_layer_floats/1e9))
     print("decoder_layer_floats: {:.2f}G".format(decoder_layer_floats/1e9))
     print("MLP_floats: {:.2f}G".format(MLP_floats/1e9))
     print("total_floats: {:.2f}G".format(total_floats/1e9))
     print("total_time: {:.2f}hours".format(total_time/3600*3))
+    print("total_param: {:.2f}M".format(total_param/1e6))
+    print("bytes: {:.2f}GB".format(total_param*4/1e9))
     return total_time
 
 

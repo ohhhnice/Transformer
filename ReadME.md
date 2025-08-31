@@ -41,12 +41,13 @@
 
 
 #
-Chinese Vocabulary Size: 96314
-English Vocabulary Size: 70421
+Chinese Vocabulary Size: 65472
+English Vocabulary Size: 49003
 batch: 80648
 batch_size:64
 3:23:13
 gpu：4.7g
+train_hours: 3hours
 
 
 "d_model": 256,
@@ -57,3 +58,9 @@ gpu：4.7g
 "dropout": 0.1,
 "num_encoder_layers": 6,
 "num_decoder_layers": 6
+
+## 训练时间计算文档
+https://zhuanlan.zhihu.com/p/624740065?s_r=0
+
+## 显存计算文档
+https://zhuanlan.zhihu.com/p/624740065
