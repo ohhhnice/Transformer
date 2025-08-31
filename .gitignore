@@ -1,6 +1,6 @@
 .venv
-*.pth
 __pycache__/
 *.zip
 *.json
-best_transformer.tar.gz
+best_transformer_epoch2.pth
+best_transformer_epoch1.pth
