@@ -1,9 +1,10 @@
 {
-    "d_model": 512,
-    "seq_len": 50,
+    "d_model": 256,
+    "src_seq_len": 30,
+    "tgt_seq_len": 50,
     "n_heads": 8,
-    "d_ff": 2048,
+    "d_ff": 1024,
     "dropout": 0.1,
-    "num_encoder_layers": 3,
-    "num_decoder_layers": 3
+    "num_encoder_layers": 6,
+    "num_decoder_layers": 6
 }

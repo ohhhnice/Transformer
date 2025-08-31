@@ -17,7 +17,7 @@ class Encoder(nn.Module):
         x: (batch_size, seq_len, d_model)
         output: (batch_size, seq_len, d_model)
         '''
-        x = self.embedding(x) * math.sqrt(self.d_model)
+        x = self.embedding(x)
         x = self.position_encoding(x)
         for layer in self.layers:
             x = layer(x, mask)

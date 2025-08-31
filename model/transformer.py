@@ -21,7 +21,6 @@ class Transformer(nn.Module):
         output: (batch_size, tgt_seq_len, vocab_size)
         '''
         enc_output = self.encoder(src, src_mask)
-        cross_mask = src_mask
         output = self.decoder(tgt, enc_output, tgt_mask, cross_mask)
         return output
     

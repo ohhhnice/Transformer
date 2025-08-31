@@ -12,9 +12,10 @@ def train_epoch(model, data_loader, criterion, optimizer, pad_idx, device):
         tgt_input, tgt_output = en[:, :-1], en[:, 1:]
         src_mask = get_padding_mask(src_input, pad_idx=pad_idx).to(device)
         tgt_mask = get_tgt_mask(tgt_input, pad_idx=pad_idx).to(device)
+        cross_mask = src_mask
 
         optimizer.zero_grad()
-        output = model(src=src_input, tgt=tgt_input, src_mask=src_mask, tgt_mask=tgt_mask)
+        output = model(src=src_input, tgt=tgt_input, src_mask=src_mask, tgt_mask=tgt_mask, cross_mask=cross_mask)
 
         loss = criterion(output.view(-1, output.contiguous().size(-1)), tgt_output.contiguous().view(-1))
         
@@ -36,8 +37,10 @@ def evaluate_epoch(model, data_loader, criterion, pad_idx, device):
             tgt_input, tgt_output = en[:, :-1], en[:, 1:]
             src_mask = get_padding_mask(src_input, pad_idx=pad_idx).to(device)
             tgt_mask = get_tgt_mask(tgt_input, pad_idx=pad_idx).to(device)
+            # cross_mask = get_padding_mask(tgt_input, pad_idx=pad_idx).to(device)
+            cross_mask = src_mask
 
-            output = model(src=src_input, tgt=tgt_input, src_mask=src_mask, tgt_mask=tgt_mask)
+            output = model(src=src_input, tgt=tgt_input, src_mask=src_mask, tgt_mask=tgt_mask, cross_mask=cross_mask)
 
             loss = criterion(output.view(-1, output.contiguous().size(-1)), tgt_output.contiguous().view(-1))
             total_loss += loss.item()

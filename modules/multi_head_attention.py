@@ -29,7 +29,7 @@ class MultiHeadAttention(nn.Module):
         scores = torch.matmul(q, k.transpose(-1, -2))/math.sqrt(self.d_k) # (batch_size, n_heads, seq_len, seq_len)
 
         if mask is not None:
-            scores.masked_fill(mask==0, -1e9)
+            scores = scores.masked_fill(mask==0, -1e9)
 
         attn = self.dropout(F.softmax(scores, dim=-1))
         output = torch.matmul(attn, v).transpose(1,2).contiguous().view(batch_size, seq_len, -1)

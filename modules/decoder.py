@@ -19,7 +19,7 @@ class Decoder(nn.Module):
         enc_output: (batch_size, seq_len, d_model)
         output: (batch_size, seq_len, vocab_size)
         '''
-        x = self.embedding(x) * math.sqrt(self.d_model)
+        x = self.embedding(x)
         x = self.position_encoding(x)
         for layer in self.layers:
             x = layer(x, enc_output, self_mask, cross_mask)

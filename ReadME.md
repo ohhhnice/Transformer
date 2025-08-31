@@ -7,6 +7,7 @@
 ## win: device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 ## mac: device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
+## 数据集：https://aistudio.baidu.com/datasetdetail/209041
 
 .
 ├── Inference  # 推理部分
@@ -35,3 +36,24 @@
 9. 强化学习
 10. 一个encoder-only、一个decoder-only都试一下
 11. 计算内存占用量，参数量
+
+
+
+
+#
+Chinese Vocabulary Size: 96314
+English Vocabulary Size: 70421
+batch: 80648
+batch_size:64
+3:23:13
+gpu：4.7g
+
+
+"d_model": 256,
+"src_seq_len": 30,
+"tgt_seq_len": 50,
+"n_heads": 8,
+"d_ff": 1024,
+"dropout": 0.1,
+"num_encoder_layers": 6,
+"num_decoder_layers": 6
