@@ -17,13 +17,14 @@ import json
 from utils.train_function import train_epoch, evaluate_epoch
 from load_data.translation_data.get_dataloader import translation_dataloader
 from load_data.translation_data.stream_load_data import translation_dataloader_huge
+import random
 
 
-def translate_sentence(model, sentence, zh_vocab, en_vocab, zh_tokenizer, device, src_max_len=30, tgt_max_len=50):
+def translate_sentence(model, sentence, zh_vocab, en_vocab, zh_tokenizer, device, tgt_max_len=50, topk=1):
     model.eval()
     tokens = zh_tokenizer(sentence)
     tokens = ["<SOS>"] + tokens + ["<EOS>"]
-    tokens = tokens + ["<PAD>"] * (src_max_len - len(tokens))
+    #tokens = tokens + ["<PAD>"] * (src_max_len - len(tokens))
     src_indices = [zh_vocab.word2idx.get(token, zh_vocab.word2idx["<UNK>"]) for token in tokens]
     src_tensor = torch.LongTensor(src_indices).unsqueeze(0).to(device)  # (1, src_len)
     src_mask = get_padding_mask(src_tensor, pad_idx=zh_vocab.word2idx["<PAD>"]).to(device)
@@ -40,7 +41,9 @@ def translate_sentence(model, sentence, zh_vocab, en_vocab, zh_tokenizer, device
 
         with torch.no_grad():
             output = model.decoder(tgt_tensor, enc_output, tgt_mask, cross_mask)
-            next_token = output.argmax(-1)[:, -1].item()
+            topk_values, topk_indices = torch.topk(output[:, -1, :], k=topk, dim=-1)
+            next_token = topk_indices[0, random.randint(0, topk-1)].item()
+            # next_token = output.argmax(-1)[:, -1].item()
             tgt_indices.append(next_token)
 
             if next_token == en_vocab.word2idx["<EOS>"]:
@@ -56,7 +59,8 @@ def translate_sentence(model, sentence, zh_vocab, en_vocab, zh_tokenizer, device
 if __name__ == "__main__":
 
     SEED = 1
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     batch_size = 30
 
     # 加载模型设置
@@ -90,8 +94,8 @@ if __name__ == "__main__":
 
     # load model
     print("load model...")
-    model = Transformer(encoder_vocab_size = len(src_vocab), 
-                        decoder_vocab_size = len(tgt_vocab), 
+    model = Transformer(encoder_vocab_size = 65472,#len(src_vocab), 
+                        decoder_vocab_size = 49003,#len(tgt_vocab), 
                         d_model = model_config['d_model'], 
                         n_heads = model_config['n_heads'], 
                         d_ff = model_config['d_ff'], 
@@ -101,7 +105,7 @@ if __name__ == "__main__":
                         decoder_seq_len = model_config['tgt_seq_len'], 
                         dropout = model_config['dropout']).to(device)
 
-    model.load_state_dict(torch.load('best_transformer_epoch2.pth'))
+    model.load_state_dict(torch.load('./pth/best_transformer_epoch3.pth', map_location=device))
         
     # 测试翻译
     test_sentences = [
@@ -120,9 +124,9 @@ if __name__ == "__main__":
     print("\n翻译测试:")
     for sentence in test_sentences:
         translation = translate_sentence(
-            model, sentence, src_vocab, tgt_vocab, src_tokenizer, device, 
-            src_max_len=model_config['src_seq_len'],
-            tgt_max_len=model_config['tgt_seq_len']
+            model, sentence, src_vocab, tgt_vocab, src_tokenizer, device,
+            tgt_max_len=model_config['tgt_seq_len'],
+            topk=2
         )
         print(f"中文: {sentence}")
         print(f"英文: {' '.join(translation)}")

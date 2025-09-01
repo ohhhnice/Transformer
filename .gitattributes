@@ -1,1 +1,5 @@
 best_transformer_epoch3.pth filter=lfs diff=lfs merge=lfs -text
+load_data/translation_data/vocab/en_idx2word.json filter=lfs diff=lfs merge=lfs -text
+load_data/translation_data/vocab/en_word2idx.json filter=lfs diff=lfs merge=lfs -text
+load_data/translation_data/vocab/zh_idx2word.json filter=lfs diff=lfs merge=lfs -text
+load_data/translation_data/vocab/zh_word2idx.json filter=lfs diff=lfs merge=lfs -text
