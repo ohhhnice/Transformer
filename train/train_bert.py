@@ -35,7 +35,9 @@ def main():
     
     x = torch.randint(0, vocab_size, (batch_size, seq_len)).to(device)  # (batch_size, seq_len)
     segment_ids = torch.randint(0, 2, (batch_size, seq_len)).to(device)  # (batch_size, seq_len)
-    model(x=x, segment_ids=segment_ids)
+    mlm_output, nsp_output = model(x=x, segment_ids=segment_ids)
+    print("mlm_output shape:", mlm_output.shape)  # (batch_size, seq_len, vocab_size)
+    print("nsp_output shape:", nsp_output.shape)  # (batch_size, 2)
 
 
 if __name__ == "__main__":

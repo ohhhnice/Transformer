@@ -13,8 +13,16 @@ class Bert(nn.Module):
         self.layer_norm = nn.LayerNorm(d_model)
         self.dropout = nn.Dropout(dropout)
         self.Encode_layers = nn.ModuleList([EncoderLayer(d_model=d_model, n_heads = n_heads, d_ff = d_ff, dropout=dropout) for _ in range(encoder_num_layers)])
-        self.fc_out = nn.Linear(d_model, vocab_size)
-        self.fc_out.weight = self.embedding.weight
+        self.mlm_head = nn.Linear(d_model, vocab_size)
+        self.nsp_head = nn.Linear(d_model, 2)
+        self._init_weights()
+        self.mlm_head.weight = self.embedding.weight
+        
+
+    def _init_weights(self):
+        for p in self.parameters():
+            if p.dim() > 1:
+                nn.init.xavier_uniform_(p)
         
 
     def forward(self, x, segment_ids=None, attn_mask=None):
@@ -32,5 +40,6 @@ class Bert(nn.Module):
 
         for layer in self.Encode_layers:
             x = layer(x, attn_mask)
-        output = self.fc_out(x)
-        return output
+        mlm_output = self.mlm_head(x)
+        nsp_output = self.nsp_head(x[:,0,:])
+        return mlm_output, nsp_output
