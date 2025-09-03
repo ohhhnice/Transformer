@@ -26,8 +26,11 @@ def main():
     vocab_size = 30
     
     model = Bert(vocab_size=vocab_size,
+                 encoder_num_layers=model_config['num_encoder_layers'],
                  d_model=model_config['d_model'],
                  max_len=model_config['max_len'],
+                 n_heads=model_config['n_heads'],
+                 d_ff=model_config['d_ff'],
                  dropout=model_config['dropout']).to(device)
     
     x = torch.randint(0, vocab_size, (batch_size, seq_len)).to(device)  # (batch_size, seq_len)
