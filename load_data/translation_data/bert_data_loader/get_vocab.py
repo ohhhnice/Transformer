@@ -88,3 +88,8 @@ if __name__=="__main__":
         filepath_word2idx="./load_data/translation_data/bert_data_loader/vocab/word2idx.json", 
         filepath_idx2word="./load_data/translation_data/bert_data_loader/vocab/idx2word.json"
     )
+
+# git add -f ./load_data/translation_data/bert_data_loader/vocab/word2idx.json
+# git add -f ./load_data/translation_data/bert_data_loader/vocab/idx2word.json
+# git commit -m "add vocab for bert translation model"
+# git push
