@@ -5,8 +5,8 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 import torch
-from load_data.translation_data.tokenizer import get_tokenizers
-from load_data.translation_data.prepare_data import Vocabulary, TranslationDataset, get_data
+from load_data.translation_data.transformer_data_loader.tokenizer import get_tokenizers
+from load_data.translation_data.transformer_data_loader.prepare_data import Vocabulary, TranslationDataset, get_data
 from utils.set_seed import set_all_seeds
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
@@ -15,8 +15,8 @@ from torch import nn
 from utils.mask_fun import get_padding_mask, get_tgt_mask
 import json
 from utils.train_function import train_epoch, evaluate_epoch
-from load_data.translation_data.get_dataloader import translation_dataloader
-from load_data.translation_data.stream_load_data import translation_dataloader_huge
+from load_data.translation_data.transformer_data_loader.get_dataloader import translation_dataloader
+from load_data.translation_data.transformer_data_loader.stream_load_data import translation_dataloader_huge
 import random
 
 
@@ -83,10 +83,10 @@ if __name__ == "__main__":
         train_json_file = './load_data/translation_data/translation2019zh/translation2019zh_train.json',
         val_json_file = './load_data/translation_data/translation2019zh/translation2019zh_valid.json',
         seed=SEED,
-        src_filepath_word2idx="./load_data/translation_data/vocab/zh_word2idx.json",
-        src_filepath_idx2word="./load_data/translation_data/vocab/zh_idx2word.json",
-        tgt_filepath_word2idx="./load_data/translation_data/vocab/en_word2idx.json",
-        tgt_filepath_idx2word="./load_data/translation_data/vocab/en_idx2word.json",
+        src_filepath_word2idx="./load_data/translation_data/transformer_data_loader/vocab/zh_word2idx.json",
+        src_filepath_idx2word="./load_data/translation_data/transformer_data_loader/vocab/zh_idx2word.json",
+        tgt_filepath_word2idx="./load_data/translation_data/transformer_data_loader/vocab/en_word2idx.json",
+        tgt_filepath_idx2word="./load_data/translation_data/transformer_data_loader/vocab/en_idx2word.json",
         is_train=False
     )
 

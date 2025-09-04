@@ -8,8 +8,8 @@ from model.transformer import Transformer
 from utils.set_seed import set_all_seeds
 from torch import nn, optim
 from utils.train_function import train_epoch, evaluate_epoch
-from load_data.translation_data.get_dataloader import translation_dataloader
-from load_data.translation_data.stream_load_data import translation_dataloader_huge
+from load_data.translation_data.transformer_data_loader.get_dataloader import translation_dataloader
+from load_data.translation_data.transformer_data_loader.stream_load_data import translation_dataloader_huge
 import torch
 import json
 
@@ -43,10 +43,10 @@ def main():
         # tgt_filepath_idx2word="./load_data/translation_data/vocab/en_idx2word.json")
 
     padding_idx = src_vocab.word2idx["<PAD>"]
-    src_vocab.save(filepath_idx2word="./load_data/translation_data/vocab/zh_idx2word.json",
-                   filepath_word2idx="./load_data/translation_data/vocab/zh_word2idx.json")
-    tgt_vocab.save(filepath_idx2word="./load_data/translation_data/vocab/en_idx2word.json",
-                   filepath_word2idx="./load_data/translation_data/vocab/en_word2idx.json")
+    src_vocab.save(filepath_idx2word="./load_data/translation_data/transformer_data_loader/vocab/zh_idx2word.json",
+                   filepath_word2idx="./load_data/translation_data/transformer_data_loader/vocab/zh_word2idx.json")
+    tgt_vocab.save(filepath_idx2word="./load_data/translation_data/transformer_data_loader/vocab/en_idx2word.json",
+                   filepath_word2idx="./load_data/translation_data/transformer_data_loader/vocab/en_word2idx.json")
 
     # load model
     model = Transformer(encoder_vocab_size = len(src_vocab), 

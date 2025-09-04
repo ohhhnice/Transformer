@@ -1,6 +1,6 @@
-from load_data.translation_data.tokenizer import get_tokenizers
-from load_data.translation_data.prepare_data import Vocabulary
-from load_data.translation_data.prepare_data import TranslationDatasetHuge
+from load_data.translation_data.transformer_data_loader.tokenizer import get_tokenizers
+from load_data.translation_data.transformer_data_loader.prepare_data import Vocabulary
+from load_data.translation_data.transformer_data_loader.prepare_data import TranslationDatasetHuge
 from torch.utils.data import DataLoader
 import json
 from tqdm import tqdm
