@@ -51,3 +51,45 @@ class Vocab():
             json.dump(self.word2idx, f, ensure_ascii=False, indent=4)
         with open(filepath_idx2word, 'w', encoding='utf-8') as f:
             json.dump(self.idx2word, f, ensure_ascii=False, indent=4)
+
+if __name__=="__main__":
+    from load_data.translation_data.bert_data_loader.get_tokenizer import get_multilingual_tokenizer
+    tokenizer = get_multilingual_tokenizer()
+    train_file = "./load_data/translation_data/translation2019zh/translation2019zh_train.json"
+    val_file = "./load_data/translation_data/translation2019zh/translation2019zh_valid.json"
+    vocab = Vocab(min_freq=50)
+    with open(train_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            json_line = json.loads(line)
+            zh_sentence, en_sentence = json_line["chinese"], json_line["english"]
+            zh_sentence_tokenized = tokenizer.tokenize(zh_sentence)  
+            en_sentence_tokenized = tokenizer.tokenize(en_sentence)
+            vocab.add_sentence(zh_sentence_tokenized)
+            vocab.add_sentence(en_sentence_tokenized)
+    with open(val_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            json_line = json.loads(line)
+            zh_sentence, en_sentence = json_line["chinese"], json_line["english"]
+            zh_sentence_tokenized = tokenizer.tokenize(zh_sentence)
+            en_sentence_tokenized = tokenizer.tokenize(en_sentence)
+            vocab.add_sentence(zh_sentence_tokenized)
+            vocab.add_sentence(en_sentence_tokenized)
+    vocab.build_vocab()
+    print(f"Vocab size: {len(vocab)}")
+    vocab.save(
+        filepath_word2idx="./load_data/translation_data/bert_data_loader/vocab/word2idx.json", 
+        filepath_idx2word="./load_data/translation_data/bert_data_loader/vocab/idx2word.json"
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
