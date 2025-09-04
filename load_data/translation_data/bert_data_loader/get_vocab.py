@@ -1,4 +1,6 @@
 import json
+from tqdm import tqdm
+
 class Vocab():
     def __init__(self, min_freq=5):
         self.idx2word = {0:"[PAD]", 1:"[CLS]", 2:"[SEP]", 3:"[UNK]", 4:"[MASK]"} 
@@ -18,7 +20,7 @@ class Vocab():
 
     def build_vocab(self):
         for token, count in self.freq.items():
-            if count >= self.min_freq:
+            if count >= self.min_freq and token not in self.word2idx:
                 idx = len(self.word2idx)
                 self.word2idx[token] = idx
                 self.idx2word[idx] = token
@@ -53,13 +55,19 @@ class Vocab():
             json.dump(self.idx2word, f, ensure_ascii=False, indent=4)
 
 if __name__=="__main__":
+    import sys
+    import os
+    from pathlib import Path
+    current_dir = os.path.abspath(__file__)
+    root_dir = str(Path(current_dir).parents[3])
+    sys.path.insert(0, root_dir)
     from load_data.translation_data.bert_data_loader.get_tokenizer import get_multilingual_tokenizer
     tokenizer = get_multilingual_tokenizer()
     train_file = "./load_data/translation_data/translation2019zh/translation2019zh_train.json"
     val_file = "./load_data/translation_data/translation2019zh/translation2019zh_valid.json"
     vocab = Vocab(min_freq=50)
     with open(train_file, 'r', encoding='utf-8') as f:
-        for line in f:
+        for line in tqdm(f, desc="Building Train Vocab", total=5161434):
             json_line = json.loads(line)
             zh_sentence, en_sentence = json_line["chinese"], json_line["english"]
             zh_sentence_tokenized = tokenizer.tokenize(zh_sentence)  
@@ -67,7 +75,7 @@ if __name__=="__main__":
             vocab.add_sentence(zh_sentence_tokenized)
             vocab.add_sentence(en_sentence_tokenized)
     with open(val_file, 'r', encoding='utf-8') as f:
-        for line in f:
+        for line in tqdm(f, desc="Building Val Vocab", total = 39323):
             json_line = json.loads(line)
             zh_sentence, en_sentence = json_line["chinese"], json_line["english"]
             zh_sentence_tokenized = tokenizer.tokenize(zh_sentence)
@@ -80,16 +88,3 @@ if __name__=="__main__":
         filepath_word2idx="./load_data/translation_data/bert_data_loader/vocab/word2idx.json", 
         filepath_idx2word="./load_data/translation_data/bert_data_loader/vocab/idx2word.json"
     )
-
-
-
-
-
-
-
-
-
-
-
-
-
