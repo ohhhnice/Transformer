@@ -31,7 +31,7 @@ class TranslationDataset(Dataset):
 
     def _count_lines(self):
         with open(self.file_path, "r", encoding='utf-8') as f:
-            return sum([1 for _ in f])
+            return sum([1 for _ in f])*2
 
     def build_index(self):
         with open(self.file_path, 'r', encoding='utf-8') as f:
