@@ -28,19 +28,6 @@ class Vocab():
     def numericalize(self, tokens):
         return [self.word2idx.get(token, self.word2idx["[UNK]"]) for token in tokens]
     
-    def concate_sentences(self, tokens_a, tokens_b, max_len):
-        if len(tokens_a) + len(tokens_b) + 3 > max_len:
-            if len(tokens_a) > len(tokens_b):
-                tokens_a = tokens_a[:(max_len - len(tokens_b) - 3)]
-            else:
-                tokens_b = tokens_b[:(max_len - len(tokens_a) - 3)]
-        tokens = ["[CLS]"] + tokens_a + ["[SEP]"] + tokens_b + ["[SEP]"]
-        tokens = tokens + ["[PAD]"] * (max_len - len(tokens))
-        tokens_ids = self.numericalize(tokens)
-        seg_ids = [0] * (len(tokens_a) + 2) + [1] * (len(tokens_b) + 1)
-        attn_mask = [1] * len(seg_ids) + [0] * (max_len - len(seg_ids))
-        return tokens, tokens_ids, seg_ids, attn_mask
-
     def load_from_file(self, filepath_idx2word, filepath_word2idx):
         with open(filepath_word2idx, 'r', encoding='utf-8') as f:
             self.word2idx = json.load(f)
