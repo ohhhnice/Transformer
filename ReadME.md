@@ -27,7 +27,7 @@
 # ToDo
 1. 先手动实现一遍，看看能不能训练数据。仅此一次，后续快速迭代模型。 ✅
 2. 修改模型架构（改成 bert (encoder only) [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
-3. 修改模型架构（改成 decoder only [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
+3. 修改模型架构（改成 decoder only [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数,qwen,llama,gpt
 4. 调用hugging face去替换模块：tokenizer 模块， model
 5. 考虑训练需要的指标
 6. 更换数据集，看看更换成本
