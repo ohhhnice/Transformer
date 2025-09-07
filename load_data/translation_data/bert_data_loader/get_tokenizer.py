@@ -10,7 +10,7 @@ def get_multilingual_tokenizer(model_name="./load_data/translation_data/bert_dat
     - hfl/chinese-bert-wwm-ext: 中文优化版，同时兼容英文
     """
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    return tokenizer
+    return lambda x: tokenizer.tokenize(x)
 
 if __name__ == "__main__":
     tokenizer = get_multilingual_tokenizer()

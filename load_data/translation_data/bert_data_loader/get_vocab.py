@@ -2,7 +2,7 @@ import json
 from tqdm import tqdm
 
 class Vocab():
-    def __init__(self, min_freq=5):
+    def __init__(self, min_freq):
         self.idx2word = {0:"[PAD]", 1:"[CLS]", 2:"[SEP]", 3:"[UNK]", 4:"[MASK]"} 
         self.word2idx = {"[PAD]":0, "[CLS]":1, "[SEP]":2, "[UNK]":3, "[MASK]":4}
         self.freq = {}
@@ -28,7 +28,7 @@ class Vocab():
     def numericalize(self, tokens):
         return [self.word2idx.get(token, self.word2idx["[UNK]"]) for token in tokens]
     
-    def load_from_file(self, filepath_idx2word, filepath_word2idx):
+    def init_from_file(self, filepath_idx2word, filepath_word2idx):
         with open(filepath_word2idx, 'r', encoding='utf-8') as f:
             self.word2idx = json.load(f)
         with open(filepath_idx2word, 'r', encoding='utf-8') as f:
@@ -50,23 +50,23 @@ if __name__=="__main__":
     sys.path.insert(0, root_dir)
     from load_data.translation_data.bert_data_loader.get_tokenizer import get_multilingual_tokenizer
     tokenizer = get_multilingual_tokenizer()
-    train_file = "./load_data/translation_data/translation2019zh/translation2019zh_train.json"
+    train_file = "./load_data/translation_data/translation2019zh/translation2019zh_train_test.json"
     val_file = "./load_data/translation_data/translation2019zh/translation2019zh_valid.json"
     vocab = Vocab(min_freq=50)
     with open(train_file, 'r', encoding='utf-8') as f:
         for line in tqdm(f, desc="Building Train Vocab", total=5161434):
             json_line = json.loads(line)
             zh_sentence, en_sentence = json_line["chinese"], json_line["english"]
-            zh_sentence_tokenized = tokenizer.tokenize(zh_sentence)  
-            en_sentence_tokenized = tokenizer.tokenize(en_sentence)
+            zh_sentence_tokenized = tokenizer(zh_sentence)  
+            en_sentence_tokenized = tokenizer(en_sentence)
             vocab.add_sentence(zh_sentence_tokenized)
             vocab.add_sentence(en_sentence_tokenized)
     with open(val_file, 'r', encoding='utf-8') as f:
         for line in tqdm(f, desc="Building Val Vocab", total = 39323):
             json_line = json.loads(line)
             zh_sentence, en_sentence = json_line["chinese"], json_line["english"]
-            zh_sentence_tokenized = tokenizer.tokenize(zh_sentence)
-            en_sentence_tokenized = tokenizer.tokenize(en_sentence)
+            zh_sentence_tokenized = tokenizer(zh_sentence)
+            en_sentence_tokenized = tokenizer(en_sentence)
             vocab.add_sentence(zh_sentence_tokenized)
             vocab.add_sentence(en_sentence_tokenized)
     vocab.build_vocab()

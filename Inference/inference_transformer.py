@@ -105,7 +105,7 @@ if __name__ == "__main__":
                         decoder_seq_len = model_config['tgt_seq_len'], 
                         dropout = model_config['dropout']).to(device)
 
-    model.load_state_dict(torch.load('./pth/best_transformer_epoch3.pth', map_location=device))
+    model.load_state_dict(torch.load('./pth/transformer/best_transformer_epoch3.pth', map_location=device))
         
     # 测试翻译
     test_sentences = [
@@ -118,7 +118,8 @@ if __name__ == "__main__":
         "我喜欢学英文",
         "总算成功了",
         "你好，你怎么样？你好，你怎么样？你好，你怎么样？你好，你怎么样？",
-        "第三章总结了高句丽民俗对周边政权及后世的影响。"
+        "第三章总结了高句丽民俗对周边政权及后世的影响。",
+        "我叫刘晴"
     ]
 
     print("\n翻译测试:")
@@ -126,7 +127,7 @@ if __name__ == "__main__":
         translation = translate_sentence(
             model, sentence, src_vocab, tgt_vocab, src_tokenizer, device,
             tgt_max_len=model_config['tgt_seq_len'],
-            topk=2
+            topk=1
         )
         print(f"中文: {sentence}")
         print(f"英文: {' '.join(translation)}")
