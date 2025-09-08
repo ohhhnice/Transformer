@@ -26,17 +26,17 @@
 
 # ToDo
 1. 先手动实现一遍，看看能不能训练数据。仅此一次，后续快速迭代模型。 ✅
-2. 修改模型架构（改成 bert (encoder only) [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
-3. 修改模型架构（改成 decoder only [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数,qwen,llama,gpt,deepseek
-4. 调用hugging face去替换模块：tokenizer 模块， model
-5. 考虑训练需要的指标
-6. 更换数据集，看看更换成本
-7. 尝试 lora 手动实现微调
-8. MOE
-9. 尝试蒸馏模型
-10. 学着量化模型
-11. 强化学习
-12. 一个encoder-only、一个decoder-only都试一下
+2. 一个encoder-only✅、一个decoder-only都试一下
+3. 修改模型架构（改成 bert (encoder only) [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
+4. 修改模型架构（改成 decoder only [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数,qwen,llama,gpt,deepseek
+5. 调用hugging face去替换模块：tokenizer 模块， model
+6. 考虑训练需要的指标
+7. 更换数据集，看看更换成本
+8. 尝试 lora 手动实现微调
+9. MOE
+10. 尝试蒸馏模型
+11. 学着量化模型
+12. 强化学习
 13. 计算内存占用量，参数量
 14. 随机选词？
 
