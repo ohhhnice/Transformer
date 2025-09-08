@@ -39,6 +39,7 @@
 12. 强化学习
 13. 计算内存占用量，参数量
 14. 随机选词？
+15. Flash Attention: https://blog.csdn.net/v_JULY_v/article/details/133619540
 
 
 
