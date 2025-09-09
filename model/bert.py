@@ -29,6 +29,7 @@ class Bert(nn.Module):
         '''
         x: Tensor, shape (batch_size, seq_len)
         segment_ids: Tensor, shape (batch_size, seq_len), optional
+        attn_mask: Tensor, shape (batch_size, seq_len), optional
         return: Tensor, shape (batch_size, seq_len, d_model)
         '''
         if segment_ids is None:
@@ -36,7 +37,7 @@ class Bert(nn.Module):
         x = self.embedding(x)
         x = x + self.segment_embedding(segment_ids)
         x = self.position_embedding(x)
-        x = self.dropout(self.layer_norm(x))
+        # x = self.dropout(self.layer_norm(x))
 
         for layer in self.Encode_layers:
             x = layer(x, attn_mask)

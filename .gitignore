@@ -4,3 +4,5 @@ __pycache__/
 *.json
 best_transformer_epoch2.pth
 best_transformer_epoch1.pth
+*.pth
+*.safetensors
