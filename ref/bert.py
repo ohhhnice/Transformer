@@ -25,3 +25,6 @@ output = model(input_ids, attention_mask, token_type_ids)
 # print(sequence_output)
 print(output.last_hidden_state[0][0][:2])
 print(sequence_output[0][0][:2])
+
+embedding_output = model.embeddings(input_ids=input_ids,token_type_ids=token_type_ids)
+print(embedding_output[0][0][:2])
