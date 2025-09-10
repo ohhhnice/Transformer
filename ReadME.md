@@ -29,7 +29,7 @@
 2. 一个encoder-only✅、一个decoder-only都试一下
 3. 修改模型架构（改成 bert (encoder only) [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数
 4. 修改模型架构（改成 decoder only [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数,qwen,llama,gpt,deepseek
-5. 调用hugging face去替换模块：tokenizer 模块， model
+5. 调用hugging face去替换模块：tokenizer 模块， model✅
 6. 考虑训练需要的指标
 7. 更换数据集，看看更换成本
 8. 尝试 lora 手动实现微调
