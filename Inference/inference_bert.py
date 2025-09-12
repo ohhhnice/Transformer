@@ -56,8 +56,8 @@ if __name__ == "__main__":
     set_all_seeds(SEED)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    word2idx_path = "./load_data/translation_data/bert_data_loader/vocab/word2idx.json"
-    idx2word_path = "./load_data/translation_data/bert_data_loader/vocab/idx2word.json"
+    word2idx_path = "./load_data/translation_data/bert_data_loader/large_vocab/word2idx.json"
+    idx2word_path = "./load_data/translation_data/bert_data_loader/large_vocab/idx2word.json"
     tokenizer_config_folder = './load_data/translation_data/bert_data_loader/tokenizer/'
     model_config_file = './config/bert_config.json'
     train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train_test.json'
@@ -95,8 +95,8 @@ if __name__ == "__main__":
                  n_heads=model_config['n_heads'],
                  d_ff=model_config['d_ff'],
                  dropout=model_config['dropout']).to(device)
-    model.load_state_dict(torch.load('./tmp_pth/best_transformer_epoch8.pth', map_location=device))
-    # model.load_state_dict(torch.load('./pth/bert/best_transformer_epoch2.pth', map_location=device))
+    # model.load_state_dict(torch.load('./tmp_pth/best_transformer_epoch8.pth', map_location=device))
+    model.load_state_dict(torch.load('./pth/bert/best_transformer_epoch2.pth', map_location=device))
         
     # 测试翻译
     test_sentences = [
