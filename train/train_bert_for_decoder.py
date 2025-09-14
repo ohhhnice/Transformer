@@ -13,6 +13,7 @@ from load_data.translation_data.transformer_data_loader.tokenizer_for_bert impor
 from load_data.translation_data.bert_data_loader.get_vocab import Vocab
 from load_data.translation_data.bert_data_loader.get_tokenizer import get_multilingual_tokenizer
 from model.bert_base_seq2seq import Bert_Base_Seq2seq
+from transformers import BertTokenizer, BertModel
 import torch
 import json
 
@@ -29,24 +30,30 @@ def main():
     valid_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
 
     # 加载词表
-    vocab = Vocab(min_freq=50)
-    vocab.init_from_file(
+    model_pth="./model/bert"
+    encoder_vocab = BertTokenizer.from_pretrained(model_pth)
+    encoder_vocab_size = len(encoder_vocab)
+    encoder_padding_idx = encoder_vocab.convert_tokens_to_ids("[PAD]")
+    decoder_vocab = Vocab(min_freq=50)
+    decoder_vocab.init_from_file(
         filepath_word2idx=word2idx_path, 
         filepath_idx2word=idx2word_path
     )
-    vocab_size = len(vocab)
+    decoder_padding_idx = decoder_vocab.word2idx["[PAD]"]
+    decoder_vocab_size = len(decoder_vocab)
     tokenizer = get_multilingual_tokenizer(tokenizer_config_folder)
-    padding_idx = vocab.word2idx["[PAD]"]
+    
 
     # 加载模型
     with open(model_config_file, "r", encoding='utf-8') as f:
         model_config = json.load(f)
-    encoder_init_pth='./pth/bert/best_transformer_epoch2.pth'
+    # encoder_init_pth='./pth/bert/best_transformer_epoch2.pth'
+    encoder_init_pth="./model/bert"
     # model.load_state_dict(torch.load('./pth/bert/best_transformer_epoch2.pth', map_location=device))
 
-    print(1)
     model = Bert_Base_Seq2seq(
-        vocab_size=vocab_size,
+        encoder_vocab_size=encoder_vocab_size,
+        decoder_vocab_size=decoder_vocab_size,
         encoder_num_layers=model_config['num_encoder_layers'],
         decoder_num_layers=model_config["decoder_num_layers"],
         d_model=model_config['d_model'],
@@ -65,17 +72,18 @@ def main():
         tgt_max_len=model_config['max_len'],
         train_json_file = train_data_path,
         val_json_file = valid_data_path,
-        vocab=vocab, tokenizer=tokenizer)
-    print(2)
+        encoder_vocab=encoder_vocab, 
+        decoder_vocab=decoder_vocab,
+        tokenizer=tokenizer)
 
     # 训练设置
-    criterion = nn.CrossEntropyLoss(ignore_index=padding_idx)
+    criterion = nn.CrossEntropyLoss(ignore_index=decoder_padding_idx)
     optimizer = optim.Adam(model.parameters(), lr=0.0005)
     num_epochs = 5
     best_valid_loss = float('inf')
     for epoch in range(num_epochs):
-        train_loss = train_epoch(model, train_dataloader, criterion, optimizer, padding_idx, device)
-        valid_loss = evaluate_epoch(model, test_dataloader, criterion, padding_idx, device)
+        train_loss = train_epoch(model, train_dataloader, criterion, optimizer, encoder_padding_idx, decoder_padding_idx, device)
+        valid_loss = evaluate_epoch(model, test_dataloader, criterion, encoder_padding_idx, decoder_padding_idx, device)
 
         # if valid_loss < best_valid_loss:
         if True:

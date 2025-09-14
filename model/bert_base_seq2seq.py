@@ -15,20 +15,22 @@ from utils.train_function_bert import train_epoch, evaluate_epoch
 import random
 import torch.nn as nn
 from modules.decoder import Decoder
+from transformers import BertTokenizer, BertModel
 
 class Bert_Base_Seq2seq(nn.Module):
-    def __init__(self, vocab_size, encoder_num_layers, decoder_num_layers, d_model, max_len, 
+    def __init__(self, encoder_vocab_size, decoder_vocab_size, encoder_num_layers, decoder_num_layers, d_model, max_len, 
                  n_heads, d_ff, encoder_init_pth, dropout=0.1):
         super(Bert_Base_Seq2seq, self).__init__()
-        self.encoder = self.get_encoder(vocab_size=vocab_size,
-                                        encoder_num_layers=encoder_num_layers,
-                                        d_model=d_model,
-                                        max_len=max_len,
-                                        n_heads=n_heads,
-                                        d_ff=d_ff,
-                                        encoder_init_pth=encoder_init_pth,
-                                        dropout=dropout)
-        self.decoder = self.get_decoder(decoder_vocab_size=vocab_size, 
+        # self.encoder = self.get_encoder(vocab_size=encoder_vocab_size,
+        #                                 encoder_num_layers=encoder_num_layers,
+        #                                 d_model=d_model,
+        #                                 max_len=max_len,
+        #                                 n_heads=n_heads,
+        #                                 d_ff=d_ff,
+        #                                 encoder_init_pth=encoder_init_pth,
+        #                                 dropout=dropout)
+        self.encoder = self.get_encoder_from_hf(encoder_init_pth)
+        self.decoder = self.get_decoder(decoder_vocab_size=decoder_vocab_size, 
                                         d_model=d_model, 
                                         n_heads=n_heads,
                                         d_ff=d_ff, 
@@ -38,7 +40,7 @@ class Bert_Base_Seq2seq(nn.Module):
         
     def forward(self, src, tgt, src_mask=None, tgt_mask=None, cross_mask=None):
         seg_ids = torch.zeros_like(src)
-        enc_output = self.encoder(x=src, segment_ids=seg_ids, attn_mask=src_mask)
+        enc_output = self.encoder(input_ids=src, token_type_ids=seg_ids, attention_mask=src_mask)[0]
         output = self.decoder(tgt, enc_output, tgt_mask, cross_mask)
         return output
 
@@ -50,7 +52,11 @@ class Bert_Base_Seq2seq(nn.Module):
                  n_heads=n_heads,
                  d_ff=d_ff,
                  dropout=dropout)
-        encoder.load_state_dict(torch.load(encoder_init_pth))
+        encoder.load_state_dict(torch.load(encoder_init_pth))   
+        return encoder
+    
+    def get_encoder_from_hf(self, init_pth):
+        encoder = BertModel.from_pretrained(init_pth)
         return encoder
 
     def get_decoder(self, decoder_vocab_size, d_model, n_heads, d_ff, decoder_num_layers, decoder_seq_len, dropout=0.1):

@@ -1,11 +1,11 @@
 {
     "batch_size": 64,
-    "d_model": 128,
+    "d_model": 768,
     "max_len": 50,
-    "n_heads": 4,
-    "d_ff": 512,
+    "n_heads": 12,
+    "d_ff": 3072,
     "dropout": 0.1,
     "num_encoder_layers": 3,
     "learning_rate": 0.001,
-    "decoder_num_layers": 3
+    "decoder_num_layers": 2
 }

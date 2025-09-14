@@ -8,20 +8,23 @@ import torch
 
 def translation_dataloader_huge(batch_size, src_max_len, tgt_max_len,
                                 train_json_file, val_json_file,
-                                vocab, tokenizer):
+                                encoder_vocab, decoder_vocab, tokenizer):
     # 直接返回数据加载器
-    train_data = TranslationDatasetHuge(data_file=train_json_file, vocab=vocab, tokenizer=tokenizer, 
+    train_data = TranslationDatasetHuge(data_file=train_json_file, encoder_vocab=encoder_vocab, 
+                                        decoder_vocab=decoder_vocab, tokenizer=tokenizer, 
                                         src_max_len=src_max_len, tgt_max_len=tgt_max_len)
-    test_data = TranslationDatasetHuge(data_file=val_json_file, vocab=vocab, tokenizer=tokenizer, 
+    test_data = TranslationDatasetHuge(data_file=val_json_file, encoder_vocab=encoder_vocab,
+                                       decoder_vocab=decoder_vocab, tokenizer=tokenizer, 
                                         src_max_len=src_max_len, tgt_max_len=tgt_max_len)
     train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
     test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
     return train_dataloader, test_dataloader
 
 class TranslationDatasetHuge(Dataset):
-    def __init__(self, data_file, vocab, tokenizer, src_max_len, tgt_max_len):
+    def __init__(self, data_file, encoder_vocab, decoder_vocab, tokenizer, src_max_len, tgt_max_len):
         self.data_file = data_file
-        self.vocab = vocab
+        self.encoder_vocab = encoder_vocab
+        self.decoder_vocab = decoder_vocab
         self.tokenizer = tokenizer
         self.src_max_len = src_max_len
         self.tgt_max_len = tgt_max_len
@@ -57,10 +60,8 @@ class TranslationDatasetHuge(Dataset):
         en_tokenized = self.tokenizer(en_sentence)
         zh_sentence = zh_tokenized
         en_sentence = en_tokenized
-        sep_idx =  self.vocab.word2idx["[SEP]"]
-        cls_idx = self.vocab.word2idx["[CLS]"]
-        zh_indices = [cls_idx] + self.vocab.numericalize(zh_sentence)[:self.src_max_len-2] + [sep_idx]
-        en_indices = [cls_idx] + self.vocab.numericalize(en_sentence)[:self.tgt_max_len-2] + [sep_idx]
-        zh_indices_pad = zh_indices + [self.vocab.word2idx["[PAD]"]] * (self.src_max_len - len(zh_indices))
-        en_indices_pad = en_indices + [self.vocab.word2idx["[PAD]"]] * (self.tgt_max_len - len(en_indices))
-        return torch.tensor(zh_indices_pad), torch.tensor(en_indices_pad)
+        zh_indices = self.decoder_vocab.numericalize(["[CLS]"] + zh_sentence[:self.src_max_len-2] + ["[SEP]"])
+        en_indices = self.encoder_vocab.convert_tokens_to_ids(["[CLS]"] + en_sentence[:self.tgt_max_len-2] + ["[SEP]"])
+        zh_indices_pad = zh_indices + [self.decoder_vocab.word2idx.get("[PAD]")] * (self.src_max_len - len(zh_indices))
+        en_indices_pad = en_indices + [self.encoder_vocab.convert_tokens_to_ids("[PAD]")] * (self.tgt_max_len - len(en_indices))
+        return torch.tensor(en_indices_pad), torch.tensor(zh_indices_pad)
