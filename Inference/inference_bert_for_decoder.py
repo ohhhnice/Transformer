@@ -102,7 +102,7 @@ def main():
         encoder_init_pth=encoder_init_pth,
         dropout=model_config['dropout']
     ).to(device)
-    model_pth = "./best_transformer_epoch4.pth"
+    model_pth = "./best_transformer_epoch3.pth"
     model.load_state_dict(torch.load(model_pth))
 
     # 测试翻译
