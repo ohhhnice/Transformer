@@ -42,6 +42,8 @@
 15. Flash Attention: https://blog.csdn.net/v_JULY_v/article/details/133619540
 16. https://zhuanlan.zhihu.com/p/25241219397 rope外推原理
 
+17. something about rope: https://zhuanlan.zhihu.com/p/645263524
+
 
 
 
