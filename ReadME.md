@@ -33,11 +33,11 @@
 6. 考虑训练需要的指标
 7. 更换数据集，看看更换成本 ✅
 8. 尝试 lora 手动实现微调
-9. MOE
+9. MOE ✅
 10. 尝试蒸馏模型
 11. 学着量化模型
 12. 强化学习
-13. 计算内存占用量，参数量
+13. 计算内存占用量，参数量 ⌛️
 14. 随机选词？✅
 15. Flash Attention: https://blog.csdn.net/v_JULY_v/article/details/133619540
 16. https://zhuanlan.zhihu.com/p/25241219397 rope外推原理
