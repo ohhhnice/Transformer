@@ -1,7 +1,7 @@
 from torch import nn
 import torch.nn.functional as F
 from .attention import Attention
-from .mlp import MLP
+from .mlp import MLP, MoeMlp
 
 class DecoderBlock(nn.Module):
     def __init__(self, config):
@@ -9,7 +9,10 @@ class DecoderBlock(nn.Module):
         self.attention_norm = nn.RMSNorm(config.d_model)
         self.mlp_norm = nn.RMSNorm(config.d_model)
         self.attention = Attention(config)
-        self.mlp = MLP(config)
+        if config.is_moe_mlp:
+            self.mlp = MoeMlp(config)
+        else:
+            self.mlp = MLP(config)
 
     def forward(self, x, mask=None):
         residual = x
