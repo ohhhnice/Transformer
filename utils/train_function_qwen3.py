@@ -22,7 +22,7 @@ def evaluate_epoch(model, data_loader, criterion, pad_idx, device):
     with torch.no_grad():
         for data  in tqdm(data_loader, desc="Eval Epoch"):
             input_ids, label_ids, attn_mask = data["input_ids"].to(device), data["label_ids"].to(device), data["attn_mask"].to(device)
-            output= model(x=input_ids, attn_mask=attn_mask)
+            output= model(x=input_ids, mask=attn_mask)
 
             loss = criterion(output.view(-1, output.contiguous().size(-1)), label_ids.contiguous().view(-1))
             total_loss += loss.item()

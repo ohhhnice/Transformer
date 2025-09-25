@@ -16,7 +16,7 @@ from utils.train_function_qwen3 import train_epoch, evaluate_epoch
 from model.qwen3.model_config import Config
 from model.qwen3.qwen3 import Qwen3
 from model.qwen3.mlp import MoeMlp
-model_config = Config()
+
 
 
 
@@ -27,6 +27,7 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train_test.json'
+    train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train.json'
     valid_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
     word2idx_path = "./load_data/translation_data/bert_data_loader/vocab/word2idx.json"
     idx2word_path = "./load_data/translation_data/bert_data_loader/vocab/idx2word.json"
@@ -67,7 +68,7 @@ def main():
         # if valid_loss < best_valid_loss:
         if True:
             best_valid_loss = valid_loss
-            torch.save(model.state_dict(), './tmp_pth/best_transformer_epoch{}.pth'.format(epoch+1))
+            torch.save(model.state_dict(), './best_transformer_epoch{}.pth'.format(epoch+1))
 
         print(f'Epoch: {epoch+1}, Train Loss: {train_loss:.4f}, Val. Loss: {valid_loss:.4f}')
         with open("result", "a", encoding="utf-8") as f:
