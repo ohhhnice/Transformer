@@ -22,7 +22,7 @@ from model.qwen3.mlp import MoeMlp
 
 def main():
     SEED = 5
-    num_epochs = 3000
+    num_epochs = 3
     set_all_seeds(SEED)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
