@@ -33,38 +33,24 @@
 6. 考虑训练需要的指标
 7. 更换数据集，看看更换成本 ✅
 8. 尝试 lora 手动实现微调
-9. MOE ✅
+9. MOE ✅ 进阶：训练怎么避免某个专家被多次使用？
 10. 尝试蒸馏模型
 11. 学着量化模型
 12. 强化学习
 13. 计算内存占用量，参数量 ⌛️
 14. 随机选词？✅
 15. Flash Attention: https://blog.csdn.net/v_JULY_v/article/details/133619540
-16. https://zhuanlan.zhihu.com/p/25241219397 rope外推原理
+16. https://zhuanlan.zhihu.com/p/25241219397 rope外推原理，手动实现一下。实现完毕重写一遍推理过程。
 
 17. something about rope: https://zhuanlan.zhihu.com/p/645263524
 
-
-
-
-#
-Chinese Vocabulary Size: 65472
-English Vocabulary Size: 49003
-batch: 80648
-batch_size:64
-3:23:13
-gpu：4.7g
-train_hours: 3hours
-
-
-"d_model": 256,
-"src_seq_len": 30,
-"tgt_seq_len": 50,
-"n_heads": 8,
-"d_ff": 1024,
-"dropout": 0.1,
-"num_encoder_layers": 6,
-"num_decoder_layers": 6
+18. 训练技巧：
+    1. moe 不会偏向于少量专家，全局负载均衡损失
+    2. 
+19. 上下文扩展技巧
+    1. rope abf
+    2. yarn 技术 https://zhuanlan.zhihu.com/p/674699556
+    3. dca 技术（DCA[Dynamic Context Attention] 的核心改进在于让注意力范围 “按需动态调整”，而非固定窗口大小，从而在有限计算资源下扩展有效上下文长度。）
 
 ## 训练时间计算文档
 https://zhuanlan.zhihu.com/p/624740065?s_r=0
