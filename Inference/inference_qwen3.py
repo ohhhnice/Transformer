@@ -18,18 +18,19 @@ from model.qwen3.qwen3 import Qwen3
 from model.qwen3.mlp import MoeMlp
 import random
 
-def translate_sentence(model, sentence, vocab, tokenizer, device, tgt_max_len=50, topk=1):
+def translate_sentence(model, sentence, vocab, tokenizer, device, max_len=50, topk=1):
     model.eval()
     tokens = tokenizer(sentence)
-    tokens = ["[CLS]"] + tokens + ["[SEP]"] + ["[CLS]"]
+    tokens = ["[CLS]"] + ["User"] + ["[CLS]"] + tokens + ["[SEP]"] + ["[CLS]"] + ["Assistant"] + ["[CLS]"]
     #tokens = tokens + ["<PAD>"] * (src_max_len - len(tokens))
     src_indices = vocab.numericalize(tokens)
     src_tensor = torch.LongTensor(src_indices).unsqueeze(0).to(device)  # (1, src_len)
 
-    for i in range(tgt_max_len-1):
+    while True:
+        if len(src_indices) >= max_len: break
         src_tensor = torch.LongTensor(src_indices).unsqueeze(0).to(device)
         with torch.no_grad():
-            output = model(src_tensor)
+            output, _ = model(src_tensor)
             topk_values, topk_indices = torch.topk(output[:, -1, :], k=topk, dim=-1)
             next_token = topk_indices[0, random.randint(0, topk-1)].item()
             # next_token = output.argmax(-1)[:, -1].item()
@@ -52,9 +53,9 @@ def main():
     train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train_test.json'
     train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
     valid_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
-    word2idx_path = "./load_data/translation_data/bert_data_loader/vocab/word2idx.json"
-    idx2word_path = "./load_data/translation_data/bert_data_loader/vocab/idx2word.json"
-    tokenizer_config_folder = './load_data/translation_data/bert_data_loader/tokenizer/'
+    word2idx_path = "./load_data/translation_data/qwen3_data_loader/vocab/word2idx.json"
+    idx2word_path = "./load_data/translation_data/qwen3_data_loader/vocab/idx2word.json"
+    tokenizer_config_folder = './load_data/translation_data/qwen3_data_loader/tokenizer/'
 
 
     # 加载词表
@@ -105,7 +106,7 @@ def main():
     for sentence in test_sentences:
         translation = translate_sentence(
             model, sentence, vocab, tokenizer, device,
-            tgt_max_len=model_config.max_seq_len,
+            max_len=model_config.max_seq_len,
             topk=1
         )
         print(f"中文: {sentence}")

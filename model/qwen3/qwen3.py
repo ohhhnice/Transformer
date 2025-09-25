@@ -9,9 +9,16 @@ class Qwen3(nn.Module):
         self.fc_out = nn.Linear(config.d_model, config.vocab_size)
 
     def forward(self, x, mask=None):
+        '''
+        x (b, s)
+        mask (b, s, s)
+        '''
+        balance_loss = 0.0
         x = self.word_embedding(x)
         for layer in self.decoder:
-            x = layer(x, mask)
+            x, balance_loss_i = layer(x, mask)
+            balance_loss = balance_loss + balance_loss_i
+
         x = self.fc_out(x)
-        return x
+        return x, balance_loss
         

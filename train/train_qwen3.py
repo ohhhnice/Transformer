@@ -26,12 +26,12 @@ def main():
     set_all_seeds(SEED)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train_test.json'
-    train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train.json'
+    # train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train_test.json'
+    train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
     valid_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
-    word2idx_path = "./load_data/translation_data/bert_data_loader/vocab/word2idx.json"
-    idx2word_path = "./load_data/translation_data/bert_data_loader/vocab/idx2word.json"
-    tokenizer_config_folder = './load_data/translation_data/bert_data_loader/tokenizer/'
+    word2idx_path = "./load_data/translation_data/qwen3_data_loader/vocab/word2idx.json"
+    idx2word_path = "./load_data/translation_data/qwen3_data_loader/vocab/idx2word.json"
+    tokenizer_config_folder = './load_data/translation_data/qwen3_data_loader/tokenizer/'
 
 
     # 加载词表
