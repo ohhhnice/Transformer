@@ -50,7 +50,6 @@ class TranslationDataset(Dataset):
     def __len__(self):
         return self.num_samples
 
-
     def _count_lines(self):
         with open(self.file_path, "r", encoding='utf-8') as f:
             return sum([1 for _ in f])*2
@@ -90,7 +89,6 @@ class TranslationDataset(Dataset):
                 mask_labels.append(self.padding_idx)
         return masked_tokenized_sentence, mask_labels
 
-    
     def concate_sentences(self, tokens_a, tokens_b, max_len):
         '''
         return:
