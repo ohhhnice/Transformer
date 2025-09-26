@@ -13,7 +13,7 @@ class Config:
     dropout=0.1
     is_moe_mlp=True
     
-    vocab_size = 22403
+    vocab_size = 31219
     padding_idx = 0
 
     batch_size = 32
