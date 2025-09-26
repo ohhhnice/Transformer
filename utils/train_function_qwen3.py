@@ -8,8 +8,9 @@ def train_epoch(model, data_loader, criterion, optimizer, pad_idx, device):
     for data in tqdm(data_loader, desc="Train Epoch"):
         input_ids, label_ids, attn_mask = data["input_ids"].to(device), data["label_ids"].to(device), data["attn_mask"].to(device)
         optimizer.zero_grad()
-        output= model(x=input_ids, mask=attn_mask)
-        loss = criterion(output.view(-1, output.contiguous().size(-1)), label_ids.contiguous().view(-1))
+        output, balence_loss= model(x=input_ids, mask=attn_mask)
+        loss_output = criterion(output.view(-1, output.contiguous().size(-1)), label_ids.contiguous().view(-1))
+        loss = loss_output + balence_loss
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
@@ -22,9 +23,10 @@ def evaluate_epoch(model, data_loader, criterion, pad_idx, device):
     with torch.no_grad():
         for data  in tqdm(data_loader, desc="Eval Epoch"):
             input_ids, label_ids, attn_mask = data["input_ids"].to(device), data["label_ids"].to(device), data["attn_mask"].to(device)
-            output= model(x=input_ids, mask=attn_mask)
+            output, balence_loss= model(x=input_ids, mask=attn_mask)
 
-            loss = criterion(output.view(-1, output.contiguous().size(-1)), label_ids.contiguous().view(-1))
+            loss_output = criterion(output.view(-1, output.contiguous().size(-1)), label_ids.contiguous().view(-1))
+            loss = loss_output + balence_loss
             total_loss += loss.item()
     return total_loss/len(data_loader)
 

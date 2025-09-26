@@ -9,6 +9,7 @@ class DecoderBlock(nn.Module):
         self.attention_norm = nn.RMSNorm(config.d_model)
         self.mlp_norm = nn.RMSNorm(config.d_model)
         self.attention = Attention(config)
+        self.is_moe_mlp = config.is_moe_mlp
         if config.is_moe_mlp:
             self.mlp = MoeMlp(config)
         else:
@@ -20,9 +21,13 @@ class DecoderBlock(nn.Module):
         attn_output = attn_output + residual
 
         residual = attn_output
-        output = self.mlp(self.mlp_norm(attn_output))
+        if self.is_moe_mlp:
+            output, balance_loss = self.mlp(self.mlp_norm(attn_output), mask)
+        else:
+            output = self.mlp(self.mlp_norm(attn_output))
+            balance_loss = torch.tensor(0.0, device=x.device)
         output = output + residual 
-        return output
+        return output, balance_loss
 
 
 if __name__ == "__main__":
