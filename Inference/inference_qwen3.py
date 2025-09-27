@@ -63,8 +63,9 @@ def main():
     model_config = Config()
     
     model = Qwen3(model_config).to(device)
-    model_pth = "./best_transformer_epoch1.pth"
-    model.load_state_dict(torch.load(model_pth))
+    # model_pth = "./pth/qwen3/bad_tokenizer_no_moe_balence/best_transformer_epoch3.pth"
+    model_pth = 'best_transformer_epoch1.pth'
+    model.load_state_dict(torch.load(model_pth, map_location=device))
 
     # 测试翻译
     test_sentences = [
