@@ -4,18 +4,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-import json
 import torch
 from utils.set_seed import set_all_seeds
-from model.bert import Bert
-from load_data.translation_data.qwen3_data_loader.get_dataloader import translation_dataloader
 from load_data.translation_data.qwen3_data_loader.get_vocab import Vocab
 from load_data.translation_data.qwen3_data_loader.get_tokenizer import get_multilingual_tokenizer
-from utils.train_function_qwen3 import train_epoch, evaluate_epoch
 
 from model.qwen3.model_config import Config
 from model.qwen3.qwen3 import Qwen3
-from model.qwen3.mlp import MoeMlp
 import random
 
 def translate_sentence(model, sentence, vocab, tokenizer, device, max_len=50, topk=1):
@@ -50,9 +45,6 @@ def main():
     set_all_seeds(SEED)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_train_test.json'
-    train_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
-    valid_data_path = './load_data/translation_data/translation2019zh/translation2019zh_valid.json'
     word2idx_path = "./load_data/translation_data/qwen3_data_loader/vocab/word2idx.json"
     idx2word_path = "./load_data/translation_data/qwen3_data_loader/vocab/idx2word.json"
     tokenizer_config_folder = './load_data/translation_data/qwen3_data_loader/tokenizer/'

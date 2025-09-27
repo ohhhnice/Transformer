@@ -10,7 +10,7 @@ def train_epoch(model, data_loader, criterion, optimizer, pad_idx, device):
         optimizer.zero_grad()
         output, balence_loss= model(x=input_ids, mask=attn_mask)
         loss_output = criterion(output.view(-1, output.contiguous().size(-1)), label_ids.contiguous().view(-1))
-        loss = loss_output + balence_loss
+        loss = loss_output + balence_loss*0.1
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
@@ -26,7 +26,7 @@ def evaluate_epoch(model, data_loader, criterion, pad_idx, device):
             output, balence_loss= model(x=input_ids, mask=attn_mask)
 
             loss_output = criterion(output.view(-1, output.contiguous().size(-1)), label_ids.contiguous().view(-1))
-            loss = loss_output + balence_loss
+            loss = loss_output + balence_loss*0.1
             total_loss += loss.item()
     return total_loss/len(data_loader)
 

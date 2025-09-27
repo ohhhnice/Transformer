@@ -26,7 +26,7 @@
 
 # ToDo
 1. 先手动实现一遍，看看能不能训练数据。仅此一次，后续快速迭代模型。 ✅
-2. 一个encoder-only✅、一个decoder-only都试一下
+2. 一个encoder-only✅、一个decoder-only都试一下 https://github.com/huggingface/transformers/blob/main/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py
 3. 修改模型架构（改成 bert (encoder only) [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数 ✅
 4. 修改模型架构（改成 decoder only [https://huggingface.co/google/flan-t5-base]），以至于可以调用现有的 hugging face 的参数 ✅
 5. 调用hugging face去替换模块：tokenizer 模块， model✅

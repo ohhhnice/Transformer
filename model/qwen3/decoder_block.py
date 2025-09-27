@@ -21,13 +21,14 @@ class DecoderBlock(nn.Module):
         attn_output = attn_output + residual
 
         residual = attn_output
+
+        router_logits = None  # 非MoE模式下默认为None
         if self.is_moe_mlp:
-            output, balance_loss = self.mlp(self.mlp_norm(attn_output), mask)
+            output, router_logits = self.mlp(self.mlp_norm(attn_output))
         else:
             output = self.mlp(self.mlp_norm(attn_output))
-            balance_loss = torch.tensor(0.0, device=x.device)
         output = output + residual 
-        return output, balance_loss
+        return output, router_logits
 
 
 if __name__ == "__main__":

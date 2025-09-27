@@ -70,7 +70,6 @@ class TranslationDataset(Dataset):
         merged_tokens_ids = torch.tensor(self.vocab.numericalize(merged_tokens))
         input_ids, label_ids = merged_tokens_ids[:-1], merged_tokens_ids[1:]
         label_ids = torch.tensor([num for num in label_ids], dtype=label_ids.dtype)
-        label_ids[:6+len(tokens_a)] = self.padding_idx
 
         mask = generate_qwen3_mask(input_ids.unsqueeze(0), pad_token_id=self.padding_idx)
         return input_ids, label_ids, mask
