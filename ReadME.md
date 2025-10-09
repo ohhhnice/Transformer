@@ -72,3 +72,9 @@ https://zhuanlan.zhihu.com/p/624740065
 - mask 没对齐
 - 参数不稳定，softmax全为0
 - decoder 训练的时候，只关注预测部分。无论是计算还是loss反传。
+
+
+
+## 魔搭社区下载
+pip install modelscope
+modelscope download --model Qwen/Qwen3-4B --local_dir ./model/qwen3_4b/
