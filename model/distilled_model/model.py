@@ -33,9 +33,11 @@ model.apply(init_weights)
 
 config = {"output_hidden_states":True, "output_attentions":True}
 
-with torch.no_grad():outputs = model(model_inputs["input_ids"], **config)
+with torch.no_grad():
+    outputs = model(model_inputs["input_ids"], **config)
 
 # parsing thinking content
+output_ids = outputs.logits.argmax(dim=-1)[0] 
 try:
     # rindex finding 151668 (</think>)
     index = len(output_ids) - output_ids[::-1].index(151668)
