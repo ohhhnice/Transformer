@@ -78,3 +78,11 @@ https://zhuanlan.zhihu.com/p/624740065
 ## 魔搭社区下载
 pip install modelscope
 modelscope download --model Qwen/Qwen3-4B --local_dir ./model/qwen3_4b/
+
+
+## little tips
+1. rope外推的方式、位置编码
+2. moe熟烂于心
+3. 旋转位置编码再来一遍
+4. 速度进入强化学习
+
